@@ -1,0 +1,9 @@
+# Build context for src/Atlas.Api/Dockerfile: sources only.
+**/bin/
+**/obj/
+**/node_modules/
+.git/
+web/
+deck/
+infra/
+*.pptx

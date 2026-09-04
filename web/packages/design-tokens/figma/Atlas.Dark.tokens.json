@@ -1,0 +1,120 @@
+{
+  "palette": {
+    "mode": {
+      "$type": "string",
+      "$value": "dark",
+      "$description": "MUI palette mode"
+    }
+  },
+  "color": {
+    "$type": "color",
+    "primary": {
+      "main": {
+        "$value": "#9DBDF5"
+      },
+      "light": {
+        "$value": "#C3D6FA"
+      },
+      "soft": {
+        "$value": "#1B3460",
+        "$description": "The tint a soft control sits on"
+      },
+      "contrastText": {
+        "$value": "#0B1220"
+      }
+    },
+    "secondary": {
+      "main": {
+        "$value": "#7C9CCF"
+      }
+    },
+    "success": {
+      "main": {
+        "$value": "#3CCB93"
+      }
+    },
+    "warning": {
+      "main": {
+        "$value": "#F0B65A"
+      }
+    },
+    "error": {
+      "main": {
+        "$value": "#F0716C"
+      }
+    },
+    "info": {
+      "main": {
+        "$value": "{color.primary.main}"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "#E6ECF5"
+      },
+      "secondary": {
+        "$value": "#9FB0C8"
+      }
+    },
+    "divider": {
+      "$value": "rgba(255,255,255,0.12)"
+    },
+    "background": {
+      "default": {
+        "$value": "#0B1220"
+      },
+      "paper": {
+        "$value": "#121A2B"
+      }
+    }
+  },
+  "border": {
+    "width": {
+      "$type": "number",
+      "$value": 1
+    },
+    "color": {
+      "$type": "color",
+      "$value": "{color.divider}"
+    }
+  },
+  "focus": {
+    "width": {
+      "$type": "number",
+      "$value": 0,
+      "$description": "0 = MUI's default focus ring"
+    },
+    "color": {
+      "$type": "color",
+      "$value": "{color.primary.main}"
+    }
+  },
+  "series": {
+    "$type": "color",
+    "$description": "Categorical chart colours, in order, on a dark surface",
+    "1": {
+      "$value": "#9DBDF5"
+    },
+    "2": {
+      "$value": "#3CCB93"
+    },
+    "3": {
+      "$value": "#F0B65A"
+    },
+    "4": {
+      "$value": "#B69AE0"
+    },
+    "5": {
+      "$value": "#6FC2E0"
+    },
+    "6": {
+      "$value": "#F0918A"
+    },
+    "7": {
+      "$value": "#8FC77E"
+    },
+    "8": {
+      "$value": "#C4B8A5"
+    }
+  }
+}

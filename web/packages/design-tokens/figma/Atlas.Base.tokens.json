@@ -1,0 +1,405 @@
+{
+  "font": {
+    "$type": "fontFamily",
+    "sans": {
+      "$value": [
+        "ui-sans-serif",
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Roboto",
+        "Helvetica",
+        "Arial",
+        "sans-serif"
+      ]
+    },
+    "mono": {
+      "$value": [
+        "ui-monospace",
+        "SFMono-Regular",
+        "Consolas",
+        "Menlo",
+        "monospace"
+      ]
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "control": {
+      "$value": "8px",
+      "$description": "Buttons, inputs, MUI shape.borderRadius"
+    },
+    "surface": {
+      "$value": "12px",
+      "$description": "Cards, papers, the data grid"
+    }
+  },
+  "typography": {
+    "button": {
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 600
+      }
+    },
+    "overline": {
+      "size": {
+        "$type": "dimension",
+        "$value": "11px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "letterSpacing": {
+        "$type": "string",
+        "$value": "0.08em"
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.6
+      }
+    },
+    "title": {
+      "size": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 700
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.34
+      }
+    },
+    "heading": {
+      "size": {
+        "$type": "dimension",
+        "$value": "20px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.6
+      }
+    },
+    "subheading": {
+      "size": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.57
+      }
+    },
+    "body": {
+      "size": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.5
+      }
+    },
+    "bodySmall": {
+      "size": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.43
+      }
+    },
+    "caption": {
+      "size": {
+        "$type": "dimension",
+        "$value": "12px"
+      },
+      "weight": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "lineHeight": {
+        "$type": "number",
+        "$value": 1.66
+      }
+    }
+  },
+  "space": {
+    "$type": "dimension",
+    "xs": {
+      "$value": "4px"
+    },
+    "sm": {
+      "$value": "8px"
+    },
+    "md": {
+      "$value": "16px"
+    },
+    "lg": {
+      "$value": "24px"
+    },
+    "xl": {
+      "$value": "32px"
+    }
+  },
+  "layout": {
+    "$type": "dimension",
+    "contentPadding": {
+      "$value": "24px"
+    },
+    "contentGap": {
+      "$value": "24px"
+    }
+  },
+  "component": {
+    "button": {
+      "heightSm": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "heightMd": {
+        "$type": "dimension",
+        "$value": "40px"
+      },
+      "heightLg": {
+        "$type": "dimension",
+        "$value": "48px"
+      },
+      "paddingInlineSm": {
+        "$type": "dimension",
+        "$value": "12px"
+      },
+      "paddingInlineMd": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "paddingInlineLg": {
+        "$type": "dimension",
+        "$value": "24px"
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "8px",
+        "$description": "Between the label and a start or end icon"
+      },
+      "radius": {
+        "$type": "dimension",
+        "$value": "{radius.control}"
+      },
+      "fontWeight": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "solidBackground": {
+        "$type": "color",
+        "$value": "{color.primary.main}"
+      },
+      "solidText": {
+        "$type": "color",
+        "$value": "{color.primary.contrastText}"
+      },
+      "solidHoverBackground": {
+        "$type": "color",
+        "$value": "{color.primary.light}"
+      },
+      "softBackground": {
+        "$type": "color",
+        "$value": "{color.primary.soft}"
+      },
+      "softText": {
+        "$type": "color",
+        "$value": "{color.primary.main}"
+      },
+      "outlineBorder": {
+        "$type": "color",
+        "$value": "{color.divider}"
+      },
+      "outlineText": {
+        "$type": "color",
+        "$value": "{color.primary.main}"
+      },
+      "ghostText": {
+        "$type": "color",
+        "$value": "{color.primary.main}"
+      },
+      "hoverSurface": {
+        "$type": "color",
+        "$value": "{color.primary.soft}"
+      }
+    },
+    "icon": {
+      "$description": "The square any glyph is drawn in — a custom SVG included",
+      "sizeSm": {
+        "$value": "16px"
+      },
+      "sizeMd": {
+        "$value": "20px"
+      },
+      "sizeLg": {
+        "$value": "24px"
+      }
+    },
+    "header": {
+      "height": {
+        "$type": "dimension",
+        "$value": "64px"
+      },
+      "paddingInline": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "borderColor": {
+        "$type": "color",
+        "$value": "{color.divider}"
+      },
+      "adornmentGap": {
+        "$type": "dimension",
+        "$value": "8px"
+      },
+      "adornmentSize": {
+        "$type": "dimension",
+        "$value": "32px",
+        "$description": "The square an icon adornment sits in"
+      },
+      "heightCompact": {
+        "$type": "dimension",
+        "$value": "48px",
+        "$description": "A denser bar — a panel header, an embedded view"
+      }
+    }
+  },
+  "status": {
+    "$type": "color",
+    "fund": {
+      "draft": {
+        "$value": "{series.8}"
+      },
+      "open": {
+        "$value": "{color.success.main}"
+      },
+      "frozen": {
+        "$value": "{color.warning.main}"
+      },
+      "closed": {
+        "$value": "{color.text.secondary}"
+      }
+    },
+    "deal": {
+      "pipeline": {
+        "$value": "{series.8}"
+      },
+      "investable": {
+        "$value": "{color.success.main}"
+      },
+      "closed": {
+        "$value": "{color.text.secondary}"
+      },
+      "withdrawn": {
+        "$value": "{color.error.main}"
+      }
+    },
+    "coInvestment": {
+      "proposed": {
+        "$value": "{series.8}"
+      },
+      "active": {
+        "$value": "{color.success.main}"
+      },
+      "suspended": {
+        "$value": "{color.warning.main}"
+      },
+      "closed": {
+        "$value": "{color.text.secondary}"
+      }
+    }
+  },
+  "performance": {
+    "$type": "color",
+    "positive": {
+      "$value": "{color.success.main}"
+    },
+    "negative": {
+      "$value": "{color.error.main}"
+    },
+    "flat": {
+      "$value": "{color.text.secondary}"
+    }
+  },
+  "exposure": {
+    "$type": "color",
+    "withinAppetite": {
+      "$value": "{color.success.main}"
+    },
+    "approaching": {
+      "$value": "{color.warning.main}"
+    },
+    "breach": {
+      "$value": "{color.error.main}"
+    }
+  },
+  "assetClass": {
+    "$type": "color",
+    "privateEquity": {
+      "$value": "{series.1}"
+    },
+    "privateCredit": {
+      "$value": "{series.5}"
+    },
+    "liquidEquity": {
+      "$value": "{series.2}"
+    },
+    "etf": {
+      "$value": "{series.8}"
+    }
+  },
+  "region": {
+    "$type": "color",
+    "northAmerica": {
+      "$value": "{series.3}"
+    },
+    "emea": {
+      "$value": "{series.4}"
+    },
+    "apac": {
+      "$value": "{series.6}"
+    },
+    "latam": {
+      "$value": "{series.7}"
+    }
+  },
+  "opacity": {
+    "$type": "number",
+    "soft": {
+      "$value": 0.12,
+      "$description": "Alpha applied to a tone when a surface is tinted rather than filled"
+    },
+    "disabled": {
+      "$value": 0.5,
+      "$description": "What a control fades to when it takes no input"
+    }
+  }
+}

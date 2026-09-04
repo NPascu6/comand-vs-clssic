@@ -1,0 +1,28 @@
+{
+  "name": "@atlas/designer-poc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "One page proving the designer's loop: a Figma variable changes the header, the type ramp and the buttons, and arrives as a reviewable pull request. Depends on the design system and nothing else.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4175",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@atlas/core": "workspace:*",
+    "@atlas/design-tokens": "workspace:*",
+    "@atlas/figma-sync": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

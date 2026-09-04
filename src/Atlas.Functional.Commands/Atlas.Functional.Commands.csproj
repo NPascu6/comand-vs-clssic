@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Atlas.Upstream.Contracts\Atlas.Upstream.Contracts.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>Atlas.Functional.Commands</PackageId>
+    <Description>Functional command pipeline for Atlas: declarative validators, async rules, aggregated errors and a decision trace over the upstream contracts.</Description>
+  </PropertyGroup>
+
+</Project>

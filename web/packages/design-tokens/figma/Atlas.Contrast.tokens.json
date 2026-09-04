@@ -1,0 +1,137 @@
+{
+  "palette": {
+    "mode": {
+      "$type": "string",
+      "$value": "light",
+      "$description": "MUI palette mode: a light palette pushed to black/white"
+    }
+  },
+  "color": {
+    "$type": "color",
+    "primary": {
+      "main": {
+        "$value": "#000000"
+      },
+      "light": {
+        "$value": "#333333"
+      },
+      "soft": {
+        "$value": "#FFFFFF",
+        "$description": "The tint a soft control sits on"
+      },
+      "contrastText": {
+        "$value": "#FFFFFF"
+      }
+    },
+    "secondary": {
+      "main": {
+        "$value": "{color.primary.main}"
+      }
+    },
+    "success": {
+      "main": {
+        "$value": "#006B3F"
+      }
+    },
+    "warning": {
+      "main": {
+        "$value": "#8A5A00"
+      }
+    },
+    "error": {
+      "main": {
+        "$value": "#B00020"
+      }
+    },
+    "info": {
+      "main": {
+        "$value": "#00308F"
+      }
+    },
+    "text": {
+      "primary": {
+        "$value": "#000000"
+      },
+      "secondary": {
+        "$value": "#1A1A1A"
+      }
+    },
+    "divider": {
+      "$value": "#000000"
+    },
+    "background": {
+      "default": {
+        "$value": "#FFFFFF"
+      },
+      "paper": {
+        "$value": "#FFFFFF"
+      }
+    }
+  },
+  "border": {
+    "width": {
+      "$type": "number",
+      "$value": 2
+    },
+    "color": {
+      "$type": "color",
+      "$value": "#000000"
+    }
+  },
+  "focus": {
+    "width": {
+      "$type": "number",
+      "$value": 3
+    },
+    "color": {
+      "$type": "color",
+      "$value": "#000000"
+    }
+  },
+  "button": {
+    "contained": {
+      "$type": "color",
+      "$description": "Contained buttons are white-on-black with a border, inverting on hover",
+      "background": {
+        "$value": "#FFFFFF"
+      },
+      "text": {
+        "$value": "#000000"
+      },
+      "hoverBackground": {
+        "$value": "#000000"
+      },
+      "hoverText": {
+        "$value": "#FFFFFF"
+      }
+    }
+  },
+  "series": {
+    "$type": "color",
+    "$description": "Categorical chart colours, in order, each clearing WCAG AA on white",
+    "1": {
+      "$value": "#000000"
+    },
+    "2": {
+      "$value": "#006B3F"
+    },
+    "3": {
+      "$value": "#8A5A00"
+    },
+    "4": {
+      "$value": "#5B2D8E"
+    },
+    "5": {
+      "$value": "#00548A"
+    },
+    "6": {
+      "$value": "#B00020"
+    },
+    "7": {
+      "$value": "#2F5D1E"
+    },
+    "8": {
+      "$value": "#4A4A4A"
+    }
+  }
+}

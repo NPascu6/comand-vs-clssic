@@ -1,0 +1,9 @@
+# The .NET SDK pinned by global.json at the repo root (10.0.x).
+
+steps:
+  - task: UseDotNet@2
+    displayName: Use .NET SDK from global.json
+    inputs:
+      packageType: sdk
+      useGlobalJson: true
+      workingDirectory: $(Build.SourcesDirectory)

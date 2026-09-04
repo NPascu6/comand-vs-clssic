@@ -1,0 +1,14 @@
+# Deno for the lint + test gate (config in deno.jsonc) — the same gate as
+# .github/workflows/deno.yml. Pinned to the version the repo is validated with.
+
+parameters:
+  - name: version
+    type: string
+    default: v1.46.3
+
+steps:
+  - script: |
+      set -e
+      curl -fsSL https://deno.land/install.sh | sh -s ${{ parameters.version }}
+      echo "##vso[task.prependpath]$HOME/.deno/bin"
+    displayName: Install Deno ${{ parameters.version }}

@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.base.json",
+  // Only the composition server: vite-slice.ts is loaded by Vite from the slice packages, which resolve its imports.
+  "files": ["node.d.ts", "serve-composition.ts", "token-usage/build.ts"]
+}

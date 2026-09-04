@@ -1,0 +1,6 @@
+/*
+ * Import once, at the root of an application:  import '@atlas/core/styles.css';
+ * It is the token export as custom properties — what the theme's styles read, and what a scope
+ * sets to restyle a subtree.
+ */
+@import '@atlas/design-tokens/tokens.css';

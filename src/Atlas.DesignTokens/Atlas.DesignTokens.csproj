@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>true</IsPackable>
+    <PackageId>Atlas.DesignTokens</PackageId>
+    <Description>The design system's tokens, generated for .NET from the same Figma export the web app builds its theme from. Scheme and mode aware, and keyed by the domain's own vocabulary, so a status colour is the same in the app, in an export and in a server-rendered document.</Description>
+  </PropertyGroup>
+
+  <!-- The semantic accessors take the domain enums, so a new DealStatus fails to compile
+       here until the designer has given it a colour. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Atlas.Upstream.Contracts\Atlas.Upstream.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

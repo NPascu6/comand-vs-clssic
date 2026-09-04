@@ -1,0 +1,88 @@
+# The design-token gate: a token change is reviewed like a code change. Checks the
+# committed theme inputs against the Figma export, checks the token-usage map every
+# story reads, runs the Deno suites that cover the transform, and publishes the two
+# things a token pull request is reviewed on — the token diff itself and the built
+# Storybook (the visual evidence, and the artefact deploy-storybook.yml ships).
+# The Deno gate runs here too, not only in the CI gate's Lint job, so this one job
+# stands alone: deploy-storybook.yml uses it as its whole build stage.
+
+parameters:
+  - name: job
+    type: string
+    default: ValidateTokens
+  - name: displayName
+    type: string
+    default: Design tokens (validate, publish the evidence)
+  # `git diff` over the Figma export and the generated theme inputs, as tokens.diff.
+  - name: diffArtifact
+    type: string
+    default: token-diff
+  # The built Storybook. Named `storybook` so the deploy stages download it unchanged.
+  - name: storybookArtifact
+    type: string
+    default: storybook
+
+jobs:
+  - job: ${{ parameters.job }}
+    displayName: ${{ parameters.displayName }}
+    steps:
+      # The diff is HEAD against its first parent — the target branch tip in a pull
+      # request build, the previous commit on main otherwise — so both are needed.
+      - checkout: self
+        fetchDepth: 2
+
+      - template: setup-pnpm.yml
+      - template: setup-deno.yml
+
+      - script: pnpm --filter @atlas/design-tokens check
+        displayName: Design tokens match the Figma export
+        workingDirectory: web
+
+      - script: pnpm --filter @atlas/core tokens:usage:check
+        displayName: Token usage map matches the components
+        workingDirectory: web
+
+      - script: deno lint
+        displayName: deno lint
+
+      - script: deno test -A
+        displayName: deno test
+
+      # The components the tokens dress: jsdom render tests over @atlas/core.
+      - script: pnpm test
+        displayName: Component tests
+        workingDirectory: web
+
+      # Before the build, and on failure too: a rejected token change still has to
+      # show what it changed.
+      - script: |
+          set -e
+          out=$(Build.ArtifactStagingDirectory)/${{ parameters.diffArtifact }}
+          mkdir -p "$out"
+          base=`git rev-parse --verify --quiet HEAD^1` || base=''
+          if [ -n "$base" ]; then
+            git diff "$base" HEAD -- \
+              web/packages/design-tokens/figma \
+              web/packages/design-tokens/src/generated | tee "$out/tokens.diff"
+          else
+            echo 'HEAD has no parent in this checkout; no token diff' | tee "$out/tokens.diff"
+          fi
+        displayName: Collect the token diff
+        condition: succeededOrFailed()
+
+      - publish: $(Build.ArtifactStagingDirectory)/${{ parameters.diffArtifact }}
+        artifact: ${{ parameters.diffArtifact }}
+        displayName: Publish ${{ parameters.diffArtifact }} artifact
+        condition: succeededOrFailed()
+
+      - script: pnpm build:packages
+        displayName: Build packages
+        workingDirectory: web
+
+      - script: pnpm build:storybook
+        displayName: Build storybook
+        workingDirectory: web
+
+      - publish: web/packages/core/storybook-static
+        artifact: ${{ parameters.storybookArtifact }}
+        displayName: Publish ${{ parameters.storybookArtifact }} artifact

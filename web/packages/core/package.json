@@ -1,0 +1,83 @@
+{
+  "name": "@atlas/core",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The Atlas design system: the theme, its Figma-owned tokens and every component an application draws with — an owned API over MUI, which it re-exports so a consumer installs one package.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css",
+    "./test": "./src/test/index.ts",
+    "./mui": "./src/mui.ts",
+    "./mui-icons": "./src/mui-icons.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./mui": {
+        "types": "./dist/mui.d.ts",
+        "default": "./dist/mui.js"
+      },
+      "./mui-icons": {
+        "types": "./dist/mui-icons.d.ts",
+        "default": "./dist/mui-icons.js"
+      },
+      "./styles.css": "./dist/styles.css",
+      "./test": {
+        "types": "./dist/test/index.d.ts",
+        "default": "./dist/test/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build",
+    "build": "tsc -p tsconfig.build.json && cp src/styles.css dist/styles.css",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "tokens:usage": "node ../../build/token-usage/build.ts",
+    "tokens:usage:check": "node ../../build/token-usage/build.ts --check",
+    "clean": "rm -rf dist storybook-static"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  },
+  "dependencies": {
+    "@atlas/design-tokens": "workspace:*",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
+    "@mui/x-data-grid": "^9.13.0"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.0",
+    "@storybook/react": "^8.6.0",
+    "@storybook/react-vite": "^8.6.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.0",
+    "axe-core": "^4.13.0",
+    "jsdom": "^25.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "storybook": "^8.6.0",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.0",
+    "vitest": "^2.1.9"
+  }
+}

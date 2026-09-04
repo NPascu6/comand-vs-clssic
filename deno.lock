@@ -1,0 +1,21 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "jsr:@std/yaml@1": "jsr:@std/yaml@1.2.0",
+      "npm:@types/node": "npm:@types/node@18.16.19"
+    },
+    "jsr": {
+      "@std/yaml@1.2.0": {
+        "integrity": "20beb41e4983ba3437dbefac62b14061ab058e8a187596f19d28ff9035f6e6cf"
+      }
+    },
+    "npm": {
+      "@types/node@18.16.19": {
+        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {}
+}

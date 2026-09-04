@@ -1,0 +1,75 @@
+{
+  "version": "1.0.0",
+  "digest": "sha256:b6733130f704898b3921c12ad7e90a058e4bc27368009056756f9e1061f6a138",
+  "updatedAt": "2026-09-09T21:04:07.204Z",
+  "releases": [
+    {
+      "version": "1.0.0",
+      "releasedAt": "2026-09-06T08:00:00.000Z",
+      "bump": "major",
+      "digest": "sha256:b6733130f704898b3921c12ad7e90a058e4bc27368009056756f9e1061f6a138",
+      "author": {
+        "name": "Mara Ilic",
+        "figmaHandle": "mara.ilic",
+        "email": "mara.ilic@example.com"
+      },
+      "figma": {
+        "fileKey": "atlas-design-system",
+        "fileName": "Atlas Design System",
+        "versionId": "4812200114",
+        "label": "Atlas 1.0"
+      },
+      "changes": [],
+      "trace": {
+        "correlationId": "BASELINE",
+        "command": "SyncDesignTokensCommand",
+        "entries": [
+          {
+            "rule": "ExportIsWellFormed",
+            "description": "The Figma payload converts to DTCG token files",
+            "kind": "Structural",
+            "outcome": "Passed",
+            "elapsedMs": 0.8,
+            "messages": []
+          },
+          {
+            "rule": "ExportSatisfiesThemeContract",
+            "description": "Every mode carries every token createAtlasTheme needs, well-typed",
+            "kind": "Structural",
+            "outcome": "Passed",
+            "elapsedMs": 1.21,
+            "messages": []
+          },
+          {
+            "rule": "CommittedExportMatchesLedger",
+            "description": "The committed export is the one tokens.lock.json records",
+            "kind": "Structural",
+            "outcome": "Passed",
+            "elapsedMs": 2.53,
+            "messages": []
+          },
+          {
+            "rule": "ChangeIsAttributable",
+            "description": "The release names the designer who published it",
+            "kind": "Structural",
+            "outcome": "Passed",
+            "elapsedMs": 0.02,
+            "messages": []
+          },
+          {
+            "rule": "TextRemainsReadable",
+            "description": "Every mode still clears the WCAG AA contrast the theme promises",
+            "kind": "Structural",
+            "outcome": "Passed",
+            "elapsedMs": 0.19,
+            "messages": []
+          }
+        ],
+        "approved": true,
+        "passed": 5,
+        "failed": 0,
+        "totalRuleMs": 4.75
+      }
+    }
+  ]
+}
