@@ -1,0 +1,37 @@
+# Deploy a prebuilt static site (a pipeline artifact) to an Azure Static Web App.
+# The web app reads /config.json at boot; that file is written here, per
+# environment, so one artifact serves dev and prod (build once, deploy anywhere).
+
+parameters:
+  # Artifact name; a deployment job downloads it to $(Pipeline.Workspace)/<artifact>.
+  - name: artifact
+    type: string
+  # The Static Web App's deployment token: the `api_key` output of the site's
+  # Terraform stack, exported by templates/terraform.yml earlier in the job.
+  - name: token
+    type: string
+  # Written to config.json as { "apiBaseUrl": ... }. Leave empty for sites
+  # without runtime config (storybook).
+  - name: apiBaseUrl
+    type: string
+    default: ''
+
+steps:
+  - download: current
+    artifact: ${{ parameters.artifact }}
+    displayName: Download ${{ parameters.artifact }}
+
+  - ${{ if ne(parameters.apiBaseUrl, '') }}:
+      - script: |
+          printf '{ "apiBaseUrl": "%s" }\n' "${{ parameters.apiBaseUrl }}" > config.json
+        displayName: Write config.json
+        workingDirectory: $(Pipeline.Workspace)/${{ parameters.artifact }}
+
+  - task: AzureStaticWebApp@0
+    displayName: Deploy ${{ parameters.artifact }}
+    inputs:
+      workingDirectory: $(Pipeline.Workspace)
+      app_location: ${{ parameters.artifact }}
+      skip_app_build: true
+      skip_api_build: true
+      azure_static_web_apps_api_token: ${{ parameters.token }}

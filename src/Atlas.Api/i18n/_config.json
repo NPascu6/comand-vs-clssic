@@ -1,0 +1,8 @@
+{
+  "defaultCode": "en",
+  "locales": [
+    { "code": "en", "enabled": true, "fallbackCode": null },
+    { "code": "de", "enabled": true, "fallbackCode": "en" },
+    { "code": "fr", "enabled": true, "fallbackCode": "en" }
+  ]
+}

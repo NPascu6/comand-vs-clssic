@@ -1,0 +1,35 @@
+{
+  "name": "@atlas/app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Atlas shell app \u2014 composes the vertical slices and the shared core design system.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@atlas/contracts": "workspace:*",
+    "@atlas/core": "workspace:*",
+    "@atlas/i18n": "workspace:*",
+    "@atlas/platform": "workspace:*",
+    "@atlas/slice-appetite": "workspace:*",
+    "@atlas/slice-coinvestment": "workspace:*",
+    "@atlas/slice-commit-capital": "workspace:*",
+    "@atlas/slice-deal-pipeline": "workspace:*",
+    "@atlas/slice-translations": "workspace:*",
+    "@atlas/slice-workspace": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}

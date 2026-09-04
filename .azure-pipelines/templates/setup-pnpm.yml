@@ -1,0 +1,34 @@
+# Node + pnpm + a cached store, then `pnpm install --frozen-lockfile` in web/.
+# The design-tokens build runs `node scripts/build-tokens.ts` directly, so Node
+# must strip types natively (>= 23.6): the 24.x LTS line.
+
+parameters:
+  - name: nodeVersion
+    type: string
+    default: 24.x
+  - name: pnpmVersion
+    type: string
+    default: '11'
+
+steps:
+  - task: NodeTool@0
+    displayName: Use Node ${{ parameters.nodeVersion }}
+    inputs:
+      versionSpec: ${{ parameters.nodeVersion }}
+
+  - script: npm install --global pnpm@${{ parameters.pnpmVersion }}
+    displayName: Install pnpm ${{ parameters.pnpmVersion }}
+
+  - task: Cache@2
+    displayName: Cache pnpm store
+    inputs:
+      key: 'pnpm | "$(Agent.OS)" | web/pnpm-lock.yaml'
+      restoreKeys: 'pnpm | "$(Agent.OS)"'
+      path: $(Pipeline.Workspace)/.pnpm-store
+
+  - script: |
+      set -e
+      pnpm config set store-dir $(Pipeline.Workspace)/.pnpm-store
+      pnpm install --frozen-lockfile
+    displayName: pnpm install
+    workingDirectory: web

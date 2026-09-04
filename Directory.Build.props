@@ -1,0 +1,21 @@
+<Project>
+
+  <!-- Shared metadata for every project in the solution. Only the two libraries
+       opt in to packing (IsPackable in their own csproj); the API, the samples
+       and the tests keep the default below. VersionPrefix so a CI run can stamp
+       a prerelease either way: -p:Version=0.1.0-ci.N or -p:VersionSuffix=ci.N. -->
+  <PropertyGroup>
+    <Company>Atlas</Company>
+    <Authors>Atlas</Authors>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <RepositoryType>git</RepositoryType>
+    <Deterministic>true</Deterministic>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Reproducible builds on the build agents (Azure DevOps sets TF_BUILD). -->
+  <PropertyGroup Condition="'$(TF_BUILD)' == 'true' or '$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+</Project>

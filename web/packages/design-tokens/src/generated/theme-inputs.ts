@@ -1,0 +1,61 @@
+// generated — do not edit. `pnpm --filter @atlas/design-tokens build` rewrites this file from figma/*.tokens.json.
+import type { ThemeInputs } from '../manifest.ts';
+
+export const themeInputs: ThemeInputs = {
+  palettes: {
+    light: {
+      mode: 'light',
+      primary: { main: '#0F2143', light: '#1B3460', contrastText: '#FFFFFF' },
+      secondary: { main: '#1B3460' },
+      success: { main: '#1FA97A' },
+      warning: { main: '#E0A33B' },
+      error: { main: '#D9534F' },
+      info: { main: '#1B3460' },
+      text: { primary: '#16223A', secondary: '#6B7A95' },
+      divider: '#E3E9F2',
+      background: { default: '#F6F8FB', paper: '#FFFFFF' },
+      border: { width: 1, color: '#E3E9F2' },
+      focus: { width: 0, color: '#0F2143' },
+    },
+    dark: {
+      mode: 'dark',
+      primary: { main: '#9DBDF5', light: '#C3D6FA', contrastText: '#0B1220' },
+      secondary: { main: '#7C9CCF' },
+      success: { main: '#3CCB93' },
+      warning: { main: '#F0B65A' },
+      error: { main: '#F0716C' },
+      info: { main: '#9DBDF5' },
+      text: { primary: '#E6ECF5', secondary: '#9FB0C8' },
+      divider: 'rgba(255,255,255,0.12)',
+      background: { default: '#0B1220', paper: '#121A2B' },
+      border: { width: 1, color: 'rgba(255,255,255,0.12)' },
+      focus: { width: 0, color: '#9DBDF5' },
+    },
+    contrast: {
+      mode: 'light',
+      primary: { main: '#000000', light: '#333333', contrastText: '#FFFFFF' },
+      secondary: { main: '#000000' },
+      success: { main: '#006B3F' },
+      warning: { main: '#8A5A00' },
+      error: { main: '#B00020' },
+      info: { main: '#00308F' },
+      text: { primary: '#000000', secondary: '#1A1A1A' },
+      divider: '#000000',
+      background: { default: '#FFFFFF', paper: '#FFFFFF' },
+      border: { width: 2, color: '#000000' },
+      focus: { width: 3, color: '#000000' },
+      buttonContained: { background: '#FFFFFF', text: '#000000', hoverBackground: '#000000', hoverText: '#FFFFFF' },
+    },
+  },
+  font: {
+    sans: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    mono: 'ui-monospace, SFMono-Regular, Consolas, Menlo, monospace',
+  },
+  radius: { control: 8, surface: 12 },
+  typography: {
+    button: { weight: 600 },
+    chip: { weight: 600 },
+    overline: { size: 11, weight: 600, letterSpacing: '0.08em', lineHeight: 1.6 },
+    tableHeader: { size: 11, weight: 700, letterSpacing: '0.06em' },
+  },
+};

@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:backend": "node build-backend.ts",
+    "build:frontend": "node build-frontend.ts"
+  },
+  "dependencies": {
+    "pptxgenjs": "^4.0.1"
+  }
+}

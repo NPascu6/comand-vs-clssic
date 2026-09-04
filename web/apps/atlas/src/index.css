@@ -1,0 +1,7 @@
+/* The shell needs a full-height root; CssBaseline (from AtlasThemeProvider) does the rest. */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}

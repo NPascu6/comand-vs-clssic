@@ -1,0 +1,23 @@
+// Deno is used for CI only (.github/workflows/deno.yml): `deno lint` over the web
+// sources and `deno test` over the pure-TypeScript domain logic — no bundler, no
+// node_modules. The app itself still builds with Vite/pnpm (see web/README.md).
+{
+  "lint": {
+    "include": ["web/apps/", "web/packages/", "web/slices/", "tests/", "deck/"],
+    // build outputs
+    "exclude": ["**/node_modules/", "**/dist/", "**/storybook-static/"],
+    // sloppy-imports (below) is needed to RUN the tests; it must not be a lint error
+    "rules": { "exclude": ["no-sloppy-imports"] }
+  },
+  "test": {
+    "include": ["tests/"]
+  },
+  // The workspace packages resolve bare specifiers through pnpm; give Deno the
+  // same names so the tests import the real modules, not copies.
+  "imports": {
+    "@atlas/contracts": "./web/packages/contracts/src/index.ts",
+    "@atlas/design-tokens": "./web/packages/design-tokens/src/index.ts"
+  },
+  // The TypeScript sources use extensionless relative imports (Vite/tsc style).
+  "unstable": ["sloppy-imports"]
+}

@@ -1,0 +1,118 @@
+# Foundation stack (infra/stacks/foundation: resource group, monitoring,
+# registry, storage). A pull request plans dev. A build of main applies dev,
+# then plans prod and — after the atlas-prod approval — applies it. Review the
+# Plan_Prod log before approving.
+#
+# The other stacks belong to their deploy pipelines (deploy-api, deploy-web-app,
+# deploy-storybook); a pull request that touches infra/ also plans each of them
+# against dev, so a shared module or tfvars change is reviewed in full.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/stacks/foundation/**
+      - infra/modules/**
+      - infra/env/**
+      - .azure-pipelines/infra.yml
+      - .azure-pipelines/templates/terraform.yml
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - infra/**
+      - .azure-pipelines/infra.yml
+      - .azure-pipelines/templates/terraform.yml
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Plan_Dev
+    variables:
+      - group: atlas-dev
+    jobs:
+      - job: Plan
+        steps:
+          - template: templates/terraform.yml
+            parameters:
+              action: plan
+              stack: foundation
+              env: dev
+
+  - stage: Plan_Stacks
+    displayName: Plan the other stacks (dev)
+    dependsOn: []
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    variables:
+      - group: atlas-dev
+    jobs:
+      - job: Plan
+        strategy:
+          matrix:
+            api: { stack: api }
+            web_app: { stack: web-app }
+            storybook: { stack: storybook }
+        steps:
+          - template: templates/terraform.yml
+            parameters:
+              action: plan
+              stack: $(stack)
+              env: dev
+
+  - stage: Apply_Dev
+    dependsOn: Plan_Dev
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    variables:
+      - group: atlas-dev
+    jobs:
+      - deployment: Apply
+        environment: atlas-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self # deployment jobs do not check out sources by default
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: foundation
+                    env: dev
+
+  - stage: Plan_Prod
+    dependsOn: Apply_Dev
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    variables:
+      - group: atlas-prod
+    jobs:
+      - job: Plan
+        steps:
+          - template: templates/terraform.yml
+            parameters:
+              action: plan
+              stack: foundation
+              env: prod
+
+  - stage: Apply_Prod
+    dependsOn: Plan_Prod
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    variables:
+      - group: atlas-prod
+    jobs:
+      - deployment: Apply
+        environment: atlas-prod # approval is configured on the environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: foundation
+                    env: prod

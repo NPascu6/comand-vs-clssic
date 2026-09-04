@@ -1,0 +1,18 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/config.json", "/assets/*", "/*.{css,js,json,ico,svg,png,woff,woff2}"]
+  },
+  "routes": [
+    {
+      "route": "/config.json",
+      "headers": { "Cache-Control": "no-cache" }
+    }
+  ],
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Permissions-Policy": "camera=(), microphone=(), geolocation=()"
+  }
+}

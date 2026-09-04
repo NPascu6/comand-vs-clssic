@@ -1,0 +1,112 @@
+# CI gate: every unit builds, tests and lints on pull requests and on main.
+# Nothing deploys from here — each deployable has its own pipeline under
+# .azure-pipelines/ (see .azure-pipelines/README.md).
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  packageVersion: 0.1.0-ci.$(Build.BuildId)
+
+stages:
+  - stage: CI
+    jobs:
+      - job: Web
+        displayName: Web (packages, app, storybook)
+        steps:
+          - template: .azure-pipelines/templates/setup-pnpm.yml
+
+          - script: pnpm --filter @atlas/design-tokens check
+            displayName: Design tokens match the Figma export
+            workingDirectory: web
+
+          - script: pnpm build:packages
+            displayName: Build packages and slices
+            workingDirectory: web
+
+          - script: pnpm typecheck
+            displayName: Typecheck
+            workingDirectory: web
+
+          - script: pnpm build:app
+            displayName: Build app
+            workingDirectory: web
+
+          - script: pnpm build:storybook
+            displayName: Build storybook
+            workingDirectory: web
+
+          - publish: web/apps/atlas/dist
+            artifact: web-app
+            displayName: Publish web-app artifact
+
+          - publish: web/packages/core/storybook-static
+            artifact: storybook
+            displayName: Publish storybook artifact
+
+      - job: Api
+        displayName: API (.NET build, test, pack)
+        steps:
+          - template: .azure-pipelines/templates/setup-dotnet.yml
+
+          - script: dotnet build Atlas.Patterns.sln --configuration Release
+            displayName: Build
+
+          - script: >-
+              dotnet test Atlas.Patterns.sln --configuration Release --no-build
+              --logger trx --results-directory $(Agent.TempDirectory)/TestResults
+            displayName: Test
+
+          - task: PublishTestResults@2
+            displayName: Publish test results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: '**/*.trx'
+              searchFolder: $(Agent.TempDirectory)/TestResults
+
+          - script: |
+              set -e
+              dotnet pack src/Atlas.Functional.Commands --configuration Release -p:Version=$(packageVersion) --output $(Build.ArtifactStagingDirectory)/nuget
+              dotnet pack src/Atlas.Upstream.Contracts --configuration Release -p:Version=$(packageVersion) --output $(Build.ArtifactStagingDirectory)/nuget
+            displayName: Pack
+
+          - publish: $(Build.ArtifactStagingDirectory)/nuget
+            artifact: nuget
+            displayName: Publish nuget artifact
+
+      - job: Lint
+        displayName: Lint + web tests (Deno)
+        steps:
+          - template: .azure-pipelines/templates/setup-deno.yml
+
+          - script: deno lint
+            displayName: deno lint
+
+          - script: deno test -A
+            displayName: deno test
+
+      - job: Infra
+        displayName: Terraform fmt + validate
+        strategy:
+          matrix:
+            foundation: { stack: foundation }
+            api: { stack: api }
+            web_app: { stack: web-app }
+            storybook: { stack: storybook }
+        steps:
+          - template: .azure-pipelines/templates/terraform.yml
+            parameters:
+              action: validate
+              stack: $(stack)
+              env: dev # validate loads no tfvars; the code is the same for both

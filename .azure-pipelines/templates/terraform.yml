@@ -1,0 +1,101 @@
+# One Terraform action against one stack, infra/stacks/<stack>, for one
+# environment. Each stack has its own state (key <env>/<stack>.tfstate) and
+# loads the shared values from infra/env/<env>.tfvars.
+#   validate   fmt -check over infra/, then init -backend=false + validate  (no Azure access)
+#   plan       init against the azurerm state backend, then plan
+#   apply      init against the azurerm state backend, then apply -auto-approve
+# plan and apply run inside AzureCLI@2 on the atlas-azure service connection: the
+# connection's identity is handed to the azurerm provider and backend through the
+# ARM_* variables, and the backend is configured from the TF_STATE_* values of the
+# stage's variable group. `outputs` copies stack outputs into variables of the
+# running job (secret when asked) for the steps that follow.
+
+parameters:
+  # foundation | api | web-app | storybook. Only used in paths and shell
+  # commands, so a matrix value ($(stack)) works too.
+  - name: stack
+    type: string
+  - name: env
+    type: string
+    values: [dev, prod]
+  - name: action
+    type: string
+    values: [validate, plan, apply]
+  # Extra plan/apply arguments, e.g. -var "api_image_tag=$(Build.BuildId)".
+  - name: vars
+    type: string
+    default: ''
+  # Outputs to export after plan/apply: a list of { name, variable, secret }.
+  # `variable` defaults to `name`, `secret` to false.
+  - name: outputs
+    type: object
+    default: []
+  - name: serviceConnection
+    type: string
+    default: atlas-azure
+  - name: terraformVersion
+    type: string
+    default: 1.16.0
+
+steps:
+  - script: |
+      set -e
+      version=${{ parameters.terraformVersion }}
+      cd $(Agent.TempDirectory)
+      curl -fsSLO https://releases.hashicorp.com/terraform/$version/terraform_${version}_linux_amd64.zip
+      curl -fsSLO https://releases.hashicorp.com/terraform/$version/terraform_${version}_SHA256SUMS
+      sha256sum --check --ignore-missing terraform_${version}_SHA256SUMS
+      mkdir -p $(Agent.ToolsDirectory)/terraform
+      unzip -oq terraform_${version}_linux_amd64.zip -d $(Agent.ToolsDirectory)/terraform
+      echo "##vso[task.prependpath]$(Agent.ToolsDirectory)/terraform"
+    displayName: Install Terraform ${{ parameters.terraformVersion }}
+
+  - ${{ if eq(parameters.action, 'validate') }}:
+      - script: |
+          set -e
+          terraform fmt -check -recursive
+          cd stacks/${{ parameters.stack }}
+          terraform init -backend=false -input=false
+          terraform validate
+        displayName: Terraform validate (${{ parameters.stack }})
+        workingDirectory: infra
+
+  - ${{ if ne(parameters.action, 'validate') }}:
+      - task: AzureCLI@2
+        displayName: Terraform ${{ parameters.action }} (${{ parameters.stack }}, ${{ parameters.env }})
+        inputs:
+          azureSubscription: ${{ parameters.serviceConnection }}
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          workingDirectory: infra/stacks/${{ parameters.stack }}
+          inlineScript: |
+            set -e
+            export ARM_CLIENT_ID="$servicePrincipalId"
+            export ARM_TENANT_ID="$tenantId"
+            export ARM_SUBSCRIPTION_ID=`az account show --query id -o tsv`
+            # Workload identity federation hands out an OIDC token; a secret-based
+            # connection hands out the key. Support either.
+            if [ -n "$idToken" ]; then
+              export ARM_USE_OIDC=true ARM_OIDC_TOKEN="$idToken"
+            else
+              export ARM_CLIENT_SECRET="$servicePrincipalKey"
+            fi
+            terraform init -input=false \
+              -backend-config="resource_group_name=$(TF_STATE_RESOURCE_GROUP)" \
+              -backend-config="storage_account_name=$(TF_STATE_STORAGE_ACCOUNT)" \
+              -backend-config="container_name=$(TF_STATE_CONTAINER)" \
+              -backend-config="key=${{ parameters.env }}/${{ parameters.stack }}.tfstate"
+            if [ "${{ parameters.action }}" = "apply" ]; then
+              terraform apply -input=false -auto-approve -var-file=../../env/${{ parameters.env }}.tfvars ${{ parameters.vars }}
+            else
+              terraform plan -input=false -var-file=../../env/${{ parameters.env }}.tfvars ${{ parameters.vars }}
+            fi
+            # Hand the requested outputs to the next steps of this job.
+            while read -r spec; do
+              name=`jq -r '.name' <<< "$spec"`
+              variable=`jq -r '.variable // .name' <<< "$spec"`
+              secret=`jq -r '.secret // false' <<< "$spec"`
+              value=`terraform output -raw "$name"`
+              echo "##vso[task.setvariable variable=$variable;issecret=$secret]$value"
+            done < <(jq -c '.[]' <<< '${{ convertToJson(parameters.outputs) }}')

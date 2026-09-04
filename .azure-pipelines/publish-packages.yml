@@ -1,0 +1,91 @@
+# npm packages (web/packages, web/slices) → the Azure Artifacts npm feed, and
+# NuGet packages (Atlas.Functional.Commands, Atlas.Upstream.Contracts) → the NuGet
+# feed. A build of main publishes the prerelease 0.1.0-ci.<build id> (npm dist-tag
+# "ci") to the feeds in atlas-dev; a v<version> tag publishes <version> (dist-tag
+# "latest") to the feeds in atlas-prod. Point both groups at one feed if that is
+# all you have.
+
+trigger:
+  branches:
+    include:
+      - main
+  tags:
+    include:
+      - v*
+  paths:
+    include:
+      - web/packages/**
+      - web/slices/**
+      - src/**
+      - .azure-pipelines/publish-packages.yml
+      - .azure-pipelines/templates/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags/v') }}:
+      - group: atlas-prod
+      - name: packageVersion
+        value: ${{ replace(variables['Build.SourceBranch'], 'refs/tags/v', '') }}
+      - name: npmDistTag
+        value: latest
+  - ${{ else }}:
+      - group: atlas-dev
+      - name: packageVersion
+        value: 0.1.0-ci.$(Build.BuildId)
+      - name: npmDistTag
+        value: ci
+
+stages:
+  - stage: Publish
+    jobs:
+      - job: Npm
+        displayName: npm packages
+        steps:
+          - template: templates/setup-pnpm.yml
+
+          # Every workspace package gets the same version, so pnpm publish can
+          # replace the workspace:* ranges with it. The app is private and skipped.
+          - script: pnpm -r --filter '@atlas/*' --filter '!@atlas/app' exec npm version $(packageVersion) --no-git-tag-version --allow-same-version
+            displayName: Stamp $(packageVersion)
+            workingDirectory: web
+
+          - script: pnpm build:packages
+            displayName: Build packages and slices
+            workingDirectory: web
+
+          # npmAuthenticate adds the feed credentials to the .npmrc that names it.
+          - script: printf '@atlas:registry=%s\nalways-auth=true\n' "$(NPM_FEED_URL)" > .npmrc
+            displayName: Point @atlas at the feed
+            workingDirectory: web
+
+          - task: npmAuthenticate@0
+            displayName: Authenticate to the npm feed
+            inputs:
+              workingFile: web/.npmrc
+
+          - script: pnpm publish -r --no-git-checks --registry $(NPM_FEED_URL) --tag $(npmDistTag)
+            displayName: pnpm publish
+            workingDirectory: web
+
+      - job: NuGet
+        displayName: NuGet packages
+        steps:
+          - template: templates/setup-dotnet.yml
+
+          - script: |
+              set -e
+              dotnet pack src/Atlas.Functional.Commands --configuration Release -p:Version=$(packageVersion) --output $(Build.ArtifactStagingDirectory)/nuget
+              dotnet pack src/Atlas.Upstream.Contracts --configuration Release -p:Version=$(packageVersion) --output $(Build.ArtifactStagingDirectory)/nuget
+            displayName: Pack $(packageVersion)
+
+          # NuGetAuthenticate wires the pipeline identity into the credential
+          # provider; --api-key is a required placeholder for Azure Artifacts.
+          - task: NuGetAuthenticate@1
+            displayName: Authenticate to the NuGet feed
+
+          - script: dotnet nuget push "$(Build.ArtifactStagingDirectory)/nuget/*.nupkg" --source $(NUGET_FEED_URL) --api-key az --skip-duplicate
+            displayName: dotnet nuget push

@@ -1,0 +1,90 @@
+# Storybook (web/packages/core) → Static Web App "storybook". Built once on main,
+# deployed to dev, then — after the atlas-prod approval — to prod. Each
+# environment stage first applies the storybook Terraform stack (this pipeline
+# owns it) and deploys with the deployment token the stack outputs.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/packages/core/**
+      - web/packages/design-tokens/**
+      - infra/stacks/storybook/**
+      - infra/modules/**
+      - infra/env/**
+      - .azure-pipelines/deploy-storybook.yml
+      - .azure-pipelines/templates/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - template: templates/setup-pnpm.yml
+
+          - script: pnpm build:packages
+            displayName: Build packages and slices
+            workingDirectory: web
+
+          - script: pnpm build:storybook
+            displayName: Build storybook
+            workingDirectory: web
+
+          - publish: web/packages/core/storybook-static
+            artifact: storybook
+            displayName: Publish storybook artifact
+
+  - stage: Deploy_Dev
+    dependsOn: Build
+    variables:
+      - group: atlas-dev
+    jobs:
+      - deployment: Deploy
+        environment: atlas-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self # deployment jobs do not check out sources by default
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: storybook
+                    env: dev
+                    outputs:
+                      - { name: api_key, variable: SWA_DEPLOYMENT_TOKEN, secret: true }
+                - template: templates/deploy-static-web-app.yml
+                  parameters:
+                    artifact: storybook
+                    token: $(SWA_DEPLOYMENT_TOKEN)
+
+  - stage: Deploy_Prod
+    dependsOn: Deploy_Dev
+    variables:
+      - group: atlas-prod
+    jobs:
+      - deployment: Deploy
+        environment: atlas-prod # approval is configured on the environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: storybook
+                    env: prod
+                    outputs:
+                      - { name: api_key, variable: SWA_DEPLOYMENT_TOKEN, secret: true }
+                - template: templates/deploy-static-web-app.yml
+                  parameters:
+                    artifact: storybook
+                    token: $(SWA_DEPLOYMENT_TOKEN)

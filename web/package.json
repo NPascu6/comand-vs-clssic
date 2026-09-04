@@ -1,0 +1,20 @@
+{
+  "name": "atlas-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Atlas web monorepo \u2014 a shared `core` design system (an owned API over MUI) and one vertical-slice package per business domain.",
+  "scripts": {
+    "dev": "pnpm --filter @atlas/app dev",
+    "build": "pnpm --filter @atlas/app build",
+    "build:packages": "pnpm -r --filter './packages/**' --filter './slices/**' run build",
+    "build:app": "pnpm --filter @atlas/app build",
+    "build:storybook": "pnpm --filter @atlas/core build-storybook",
+    "clean": "pnpm -r run clean",
+    "preview": "pnpm --filter @atlas/app preview",
+    "typecheck": "pnpm -r exec tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

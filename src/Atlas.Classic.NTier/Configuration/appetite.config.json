@@ -1,0 +1,7 @@
+{
+  "limits": [
+    { "assetClass": "PrivateCredit", "region": "Emea", "maxAmount": 250000000 },
+    { "assetClass": "PrivateEquity", "region": "NorthAmerica", "maxAmount": 300000000 },
+    { "assetClass": "Etf", "region": "Apac", "maxAmount": 100000000 }
+  ]
+}

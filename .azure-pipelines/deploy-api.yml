@@ -1,0 +1,133 @@
+# API (src/Atlas.Api) → Container App. Build + test, build the image once, push it
+# to the dev registry, then apply the api Terraform stack (this pipeline owns it)
+# with the new image tag in dev and — after the atlas-prod approval — in prod.
+# Prod has its own registry (<prefix>prodacr), so the tag is imported into it
+# first; no rebuild, the same image digest ships to both.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/**
+      - tests/**
+      - infra/stacks/api/**
+      - infra/modules/**
+      - infra/env/**
+      - .azure-pipelines/deploy-api.yml
+      - .azure-pipelines/templates/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  imageName: atlas-api
+  imageTag: $(Build.BuildId)
+  # The registries the foundation stack creates: <prefix><env>acr. PREFIX comes
+  # from the stage's variable group and must equal `prefix` in infra/env/*.tfvars.
+  devRegistry: $(PREFIX)devacr
+  prodRegistry: $(PREFIX)prodacr
+
+stages:
+  - stage: Build
+    variables:
+      - group: atlas-dev
+    jobs:
+      - job: Build
+        steps:
+          - template: templates/setup-dotnet.yml
+
+          - script: dotnet build Atlas.Patterns.sln --configuration Release
+            displayName: Build
+
+          - script: >-
+              dotnet test Atlas.Patterns.sln --configuration Release --no-build
+              --logger trx --results-directory $(Agent.TempDirectory)/TestResults
+            displayName: Test
+
+          - task: PublishTestResults@2
+            displayName: Publish test results
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: VSTest
+              testResultsFiles: '**/*.trx'
+              searchFolder: $(Agent.TempDirectory)/TestResults
+
+          - task: Docker@2
+            displayName: Build image
+            inputs:
+              command: build
+              repository: $(devRegistry).azurecr.io/$(imageName)
+              dockerfile: src/Atlas.Api/Dockerfile
+              buildContext: $(Build.SourcesDirectory)
+              tags: $(imageTag)
+
+          - task: AzureCLI@2
+            displayName: Sign in to the registry
+            inputs:
+              azureSubscription: atlas-azure
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: az acr login --name $(devRegistry)
+
+          - task: Docker@2
+            displayName: Push image
+            inputs:
+              command: push
+              repository: $(devRegistry).azurecr.io/$(imageName)
+              tags: $(imageTag)
+
+  - stage: Deploy_Dev
+    dependsOn: Build
+    variables:
+      - group: atlas-dev
+    jobs:
+      - deployment: Deploy
+        environment: atlas-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self # deployment jobs do not check out sources by default
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: api
+                    env: dev
+                    vars: '-var "api_image_tag=$(imageTag)"'
+
+  - stage: Deploy_Prod
+    dependsOn: Deploy_Dev
+    variables:
+      - group: atlas-prod
+    jobs:
+      - deployment: Deploy
+        environment: atlas-prod # approval is configured on the environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+
+                # Server-side copy between registries; --force lets a re-run
+                # of this stage overwrite the tag it already imported.
+                - task: AzureCLI@2
+                  displayName: Import image into the prod registry
+                  inputs:
+                    azureSubscription: atlas-azure
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: >-
+                      az acr import --name $(prodRegistry)
+                      --source $(devRegistry).azurecr.io/$(imageName):$(imageTag)
+                      --image $(imageName):$(imageTag) --force
+
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: api
+                    env: prod
+                    vars: '-var "api_image_tag=$(imageTag)"'

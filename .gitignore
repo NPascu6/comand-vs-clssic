@@ -1,0 +1,39 @@
+# ── OS / IDE ───────────────────────────────────────────────
+.DS_Store
+.idea/
+.vs/
+.vscode/
+*.user
+
+# ── .NET ───────────────────────────────────────────────────
+bin/
+obj/
+out/
+*.tsbuildinfo
+
+# ── Node / web (pnpm) ──────────────────────────────────────
+node_modules/
+dist/
+.vite/
+storybook-static/
+*storybook.log
+
+# ── Deck tooling + render artifacts (the .pptx decks ARE committed) ──
+deck/node_modules/
+deck/img/
+deck/*.pdf
+deck/*.jpg
+deck/*.jpeg
+deck/*.png
+
+# Kept in git: source (src/, web/, deck/*.ts), docs/, *.md, the generated *.pptx decks, pnpm-lock.yaml
+
+# translation store runtime state (created by Atlas.Api at runtime, never committed)
+**/i18n/_audit.jsonl
+**/i18n/_history/
+
+# Terraform local state and plans (stacks under infra/)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan

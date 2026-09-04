@@ -1,0 +1,94 @@
+# Web app (web/apps/atlas) → Static Web App "app". Built once on main; the same
+# artifact goes to dev, then — after the atlas-prod approval — to prod, with
+# config.json written per environment. Each environment stage first applies the
+# web-app Terraform stack (this pipeline owns it) and deploys with the
+# deployment token the stack outputs.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - web/apps/atlas/**
+      - web/packages/**
+      - web/slices/**
+      - infra/stacks/web-app/**
+      - infra/modules/**
+      - infra/env/**
+      - .azure-pipelines/deploy-web-app.yml
+      - .azure-pipelines/templates/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build
+        steps:
+          - template: templates/setup-pnpm.yml
+
+          - script: pnpm build:packages
+            displayName: Build packages and slices
+            workingDirectory: web
+
+          - script: pnpm build:app
+            displayName: Build app
+            workingDirectory: web
+
+          - publish: web/apps/atlas/dist
+            artifact: web-app
+            displayName: Publish web-app artifact
+
+  - stage: Deploy_Dev
+    dependsOn: Build
+    variables:
+      - group: atlas-dev
+    jobs:
+      - deployment: Deploy
+        environment: atlas-dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self # deployment jobs do not check out sources by default
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: web-app
+                    env: dev
+                    outputs:
+                      - { name: api_key, variable: SWA_DEPLOYMENT_TOKEN, secret: true }
+                - template: templates/deploy-static-web-app.yml
+                  parameters:
+                    artifact: web-app
+                    token: $(SWA_DEPLOYMENT_TOKEN)
+                    apiBaseUrl: $(API_BASE_URL)
+
+  - stage: Deploy_Prod
+    dependsOn: Deploy_Dev
+    variables:
+      - group: atlas-prod
+    jobs:
+      - deployment: Deploy
+        environment: atlas-prod # approval is configured on the environment
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: templates/terraform.yml
+                  parameters:
+                    action: apply
+                    stack: web-app
+                    env: prod
+                    outputs:
+                      - { name: api_key, variable: SWA_DEPLOYMENT_TOKEN, secret: true }
+                - template: templates/deploy-static-web-app.yml
+                  parameters:
+                    artifact: web-app
+                    token: $(SWA_DEPLOYMENT_TOKEN)
+                    apiBaseUrl: $(API_BASE_URL)

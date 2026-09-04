@@ -1,0 +1,35 @@
+{
+  "palette": {
+    "mode": { "$type": "string", "$value": "light", "$description": "MUI palette mode" }
+  },
+  "color": {
+    "$type": "color",
+    "primary": {
+      "main": { "$value": "#0F2143" },
+      "light": { "$value": "#1B3460" },
+      "contrastText": { "$value": "#FFFFFF" }
+    },
+    "secondary": { "main": { "$value": "#1B3460" } },
+    "success": { "main": { "$value": "#1FA97A" } },
+    "warning": { "main": { "$value": "#E0A33B" } },
+    "error": { "main": { "$value": "#D9534F" } },
+    "info": { "main": { "$value": "{color.secondary.main}" } },
+    "text": {
+      "primary": { "$value": "#16223A" },
+      "secondary": { "$value": "#6B7A95" }
+    },
+    "divider": { "$value": "#E3E9F2" },
+    "background": {
+      "default": { "$value": "#F6F8FB" },
+      "paper": { "$value": "#FFFFFF" }
+    }
+  },
+  "border": {
+    "width": { "$type": "number", "$value": 1 },
+    "color": { "$type": "color", "$value": "{color.divider}" }
+  },
+  "focus": {
+    "width": { "$type": "number", "$value": 0, "$description": "0 = MUI's default focus ring" },
+    "color": { "$type": "color", "$value": "{color.primary.main}" }
+  }
+}

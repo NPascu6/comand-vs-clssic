@@ -1,0 +1,40 @@
+{
+  "name": "@atlas/i18n",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Backend-served translations. The frontend renders whatever keys/locales the backend provides — adding a language is data on the backend, not a frontend change. Ships only English as an offline fallback.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "@atlas/core": "workspace:*",
+    "@atlas/platform": "workspace:*"
+  }
+}

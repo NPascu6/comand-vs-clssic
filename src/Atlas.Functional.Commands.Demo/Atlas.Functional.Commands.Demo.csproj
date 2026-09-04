@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The console walk-through of the three scenarios. Lives next to the library
+       so Atlas.Functional.Commands packs as a plain class library. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Atlas.Functional.Commands\Atlas.Functional.Commands.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>
