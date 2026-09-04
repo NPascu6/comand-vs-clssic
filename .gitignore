@@ -1,0 +1,28 @@
+# ── OS / IDE ───────────────────────────────────────────────
+.DS_Store
+.idea/
+.vs/
+.vscode/
+*.user
+
+# ── .NET ───────────────────────────────────────────────────
+bin/
+obj/
+*.tsbuildinfo
+
+# ── Node / web (pnpm) ──────────────────────────────────────
+node_modules/
+dist/
+.vite/
+storybook-static/
+*storybook.log
+
+# ── Deck tooling + render artifacts (the .pptx decks ARE committed) ──
+deck/node_modules/
+deck/img/
+deck/*.pdf
+deck/*.jpg
+deck/*.jpeg
+deck/*.png
+
+# Kept in git: source (src/, web/, deck/*.js), docs/, *.md, the generated *.pptx decks, pnpm-lock.yaml

@@ -1,0 +1,9 @@
+packages:
+  - 'packages/*'
+  - 'slices/*'
+  - 'apps/*'
+
+# esbuild (Vite's bundler) is allowed to run its postinstall to set up its
+# platform binary. Everything else stays blocked by pnpm's default policy.
+allowBuilds:
+  esbuild: true

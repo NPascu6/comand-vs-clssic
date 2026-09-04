@@ -1,0 +1,55 @@
+@Atlas.Api_HostAddress = http://localhost:5179
+
+### Health check
+GET {{Atlas.Api_HostAddress}}/
+Accept: text/plain
+
+### Reference data for the form dropdowns
+GET {{Atlas.Api_HostAddress}}/api/reference
+Accept: application/json
+
+### Commit capital — VALID (expects approved: true)
+POST {{Atlas.Api_HostAddress}}/api/commitments
+Content-Type: application/json
+
+{
+  "fundId": "PF-APAC-CREDIT",
+  "coInvestmentId": "CI-ROOT",
+  "dealId": "DEAL-PE-NA-02",
+  "amount": 10000000,
+  "currency": "USD",
+  "assetClass": "PrivateEquity",
+  "region": "NorthAmerica",
+  "liquidity": "Illiquid",
+  "commitmentDate": "2026-09-01",
+  "requestedBy": "pm.alice"
+}
+
+### Commit capital — FAILING (expects approved: false; COINVEST_NO_HEADROOM + APPETITE_BREACH)
+POST {{Atlas.Api_HostAddress}}/api/commitments
+Content-Type: application/json
+
+{
+  "fundId": "PF-APAC-CREDIT",
+  "coInvestmentId": "CI-SLEEVE-PC",
+  "dealId": "DEAL-PC-EMEA-01",
+  "amount": 25000000,
+  "currency": "EUR",
+  "assetClass": "PrivateCredit",
+  "region": "Emea",
+  "liquidity": "Illiquid",
+  "commitmentDate": "2026-07-01",
+  "requestedBy": "pm.bob"
+}
+
+### i18n — available locales (drop a JSON file in i18n/ to add one, no rebuild)
+GET {{Atlas.Api_HostAddress}}/api/i18n/locales
+Accept: application/json
+
+### i18n — German entries (missing keys fall back to en)
+GET {{Atlas.Api_HostAddress}}/api/i18n/de
+Accept: application/json
+
+### i18n — French entries (missing keys fall back to en)
+GET {{Atlas.Api_HostAddress}}/api/i18n/fr
+Accept: application/json

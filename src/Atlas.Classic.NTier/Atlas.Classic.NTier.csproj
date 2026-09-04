@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Atlas.Upstream.Contracts\Atlas.Upstream.Contracts.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Atlas.Classic.NTier</RootNamespace>
+  </PropertyGroup>
+
+  <!--
+    The "json configs" layer. A classic stack externalises policy into config
+    files and ships them next to the binary. We must remember to copy the file
+    to the output directory or the AppetiteConfigFactory throws at runtime —
+    one more moving part the feature depends on.
+  -->
+  <ItemGroup>
+    <Content Include="Configuration\appetite.config.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>
